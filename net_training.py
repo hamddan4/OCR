@@ -4,9 +4,9 @@
 
 '''
 
-
-
 from __future__ import print_function
+
+import numpy as np
 
 import keras
 
@@ -21,24 +21,54 @@ from keras.optimizers import RMSprop
 
 from keras.models import model_from_json
 
-from keras.models import to_json
+
+batch_size = 128
+
+num_classes = 10
+
+epochs = 2 
 
 
+def __loadmodel(namefile):
+    file = open(namefile+'.json','r')
+    json_string = ''
+    
+    for line in file:
+        json_string += line
+    
+    model = model_from_json(json_string)
+    model.load_weights(namefile+'config')
+    
+    model.compile(loss='categorical_crossentropy',optimizer=RMSprop(),metrics=['accuracy'])
+    
+    return model
 
+
+def __savemodel(namefile,model):
+        
+    json_model = model.to_json()    
+    file = open(namefile+'.json','w')
+    file.write(json_model)    
+    file.close()
+
+    model.save_weights(namefile+'config')
+    
+    
+def net_predict(im_char):
+    model = __loadmodel('model')
+    
+    prediction = model.predict(np.array([im_char])) #habra que revisar este rollo de los corchetes en el futuro
+      
+    char_predicted = np.argmax(prediction,axis=1)[0]
+    
+    return char_predicted
+    
+    
 def net_train():
-    
-    batch_size = 128
-    
-    num_classes = 10
-    
-    epochs = 20
-    
-    
     
     # the data, shuffled and split between train and test sets
     
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    
     
     
     x_train = x_train.reshape(60000, 784)
@@ -69,7 +99,7 @@ def net_train():
     
     model = Sequential()
     
-    model.add(Dense(512, activation='relu', input_shape=(784,)))
+    model.add(Dense(512, activation='relu', input_dim=784))
     
     model.add(Dropout(0.2))
     
@@ -103,7 +133,8 @@ def net_train():
     
                         validation_data=(x_test, y_test))
     
-    to_json()
+    
+    __savemodel('model',model)
     
     score = model.evaluate(x_test, y_test, verbose=0)
     
