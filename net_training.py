@@ -120,10 +120,23 @@ def net_train(x,y):
     model.add(Dense(512, activation='relu', input_dim=4096))
     model.add(Dropout(0.2))
     
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.2))
+    
+    model.add(Dense(128, activation='relu'))
+    model.add(Dropout(0.2))
+    
     model.add(Dense(64, activation='relu'))    
     model.add(Dropout(0.2))
     
     model.add(Dense(64, activation='relu'))    
+    model.add(Dropout(0.2))
+    
+    model.add(Dense(128, activation='relu'))
+    model.add(Dropout(0.2))
+    
+    
+    model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.2))
     
     model.add(Dense(512, activation='relu'))    
