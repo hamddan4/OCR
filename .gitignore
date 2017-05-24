@@ -1,2 +1,4 @@
 test.txt
 *.pyc
+machine_written/
+net_training.pyc
