@@ -9,6 +9,7 @@
 import get_chars as gc
 reload(gc)
 
+import matplotlib.pyplot as plt
 
 lines = []
 
@@ -18,18 +19,15 @@ def main():
     global lines
     params = {
         "TEST_MODE": {
-            
             "line_detect":False,
             "word_detect":False,
             "char_detect":False
         },
         
         "new_net":False,
-        "image_name": "Practica5-1.png",
+        "image_name": "brut.png",
         
         "threshold":128
-        
-        
     }
    
     max_plots = 0
