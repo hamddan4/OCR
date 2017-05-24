@@ -7,11 +7,13 @@
 #import net_training as nt
 
 import get_chars as gc
+import string 
 reload(gc)
 
 import matplotlib.pyplot as plt
 
 lines = []
+trans_table = range(0,10)+list(string.ascii_uppercase)+list(string.ascii_lowercase)
 
 def neural_predict():
     return "X"

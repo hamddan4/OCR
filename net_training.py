@@ -5,19 +5,18 @@
 '''
 
 from __future__ import print_function
+import string
 
 import numpy as np
 
 import keras
-
-from keras.datasets import mnist
+import keras.initializers as inits
 
 from keras.models import Sequential
 
 from keras.layers import Dense, Dropout
 
-
-from keras.optimizers import RMSprop
+from keras.optimizers import RMSprop,Adadelta
 
 from keras.models import model_from_json
 
@@ -28,6 +27,7 @@ num_classes = 62
 
 epochs = 30 
 
+translation_table = range(0,10)+list(string.ascii_uppercase)+list(string.ascii_lowercase)
 
 def __loadmodel(namefile):
     file = open(namefile+'.json','r')
@@ -117,33 +117,17 @@ def net_train(x,y):
     
     model = Sequential()
     
-    model.add(Dense(512, activation='relu', input_dim=4096))
+    model.add(Dense(1024, activation='relu', input_dim=4096,kernel_initializer=inits.he_normal()))
     model.add(Dropout(0.2))
     
-    model.add(Dense(256, activation='relu'))
+    model.add(Dense(256, activation='relu',kernel_initializer=inits.he_normal()))    
     model.add(Dropout(0.2))
     
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.2))
-    
-    model.add(Dense(64, activation='relu'))    
-    model.add(Dropout(0.2))
-    
-    model.add(Dense(64, activation='relu'))    
-    model.add(Dropout(0.2))
-    
-    model.add(Dense(128, activation='relu'))
+    model.add(Dense(1024, activation='relu',kernel_initializer=inits.he_normal()))    
     model.add(Dropout(0.2))
     
     
-    model.add(Dense(256, activation='relu'))
-    model.add(Dropout(0.2))
-    
-    model.add(Dense(512, activation='relu'))    
-    model.add(Dropout(0.2))
-    
-    
-    model.add(Dense(62, activation='softmax'))
+    model.add(Dense(62, activation='softmax',kernel_initializer=inits.he_normal()))
     
     
     
@@ -153,7 +137,7 @@ def net_train(x,y):
     
     model.compile(loss='categorical_crossentropy',
     
-                  optimizer=RMSprop(),
+                  optimizer=Adadelta(),
     
                   metrics=['accuracy'])
     
