@@ -22,11 +22,11 @@ from keras.optimizers import RMSprop
 from keras.models import model_from_json
 
 
-batch_size = 128
+batch_size = 256
 
-num_classes = 10
+num_classes = 62
 
-epochs = 2 
+epochs = 30 
 
 
 def __loadmodel(namefile):
@@ -64,24 +64,43 @@ def net_predict(im_char):
     return char_predicted
     
     
-def net_train():
+def net_train(x,y):
     
     # the data, shuffled and split between train and test sets
     
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
+#    (x_train, y_train), (x_test, y_test) = mnist.load_data()
     
     
-    x_train = x_train.reshape(60000, 784)
     
-    x_test = x_test.reshape(10000, 784)
+    x /= 255
     
-    x_train = x_train.astype('float32')
+    y = keras.utils.to_categorical(y, num_classes)
     
-    x_test = x_test.astype('float32')
+    randlist = np.arange(0,np.shape(x)[0])
+    np.random.shuffle(randlist)
     
-    x_train /= 255
+    x = x[randlist]
+    y = y[randlist]
     
-    x_test /= 255
+    x_train = x[1:np.shape(x)[0]*0.7]
+    
+    x_test = x[np.shape(x)[0]*0.7:-1]
+    
+    y_train = y[1:np.shape(y)[0]*0.7]
+    
+    y_test = y[np.shape(y)[0]*0.7:-1]
+    
+#    x_train = x_train.reshape(60000, 784)
+#    
+#    x_test = x_test.reshape(10000, 784)
+    
+#    x_train = x_train.astype('float32')
+#    
+#    x_test = x_test.astype('float32')
+    
+#    x_train /= 255
+#    
+#    x_test /= 255
     
     print(x_train.shape[0], 'train samples')
     
@@ -91,23 +110,27 @@ def net_train():
     
     # convert class vectors to binary class matrices
     
-    y_train = keras.utils.to_categorical(y_train, num_classes)
     
-    y_test = keras.utils.to_categorical(y_test, num_classes)
+
     
     
     
     model = Sequential()
     
-    model.add(Dense(512, activation='relu', input_dim=784))
-    
+    model.add(Dense(512, activation='relu', input_dim=4096))
     model.add(Dropout(0.2))
     
-    model.add(Dense(512, activation='relu'))
-    
+    model.add(Dense(64, activation='relu'))    
     model.add(Dropout(0.2))
     
-    model.add(Dense(10, activation='softmax'))
+    model.add(Dense(64, activation='relu'))    
+    model.add(Dropout(0.2))
+    
+    model.add(Dense(512, activation='relu'))    
+    model.add(Dropout(0.2))
+    
+    
+    model.add(Dense(62, activation='softmax'))
     
     
     
