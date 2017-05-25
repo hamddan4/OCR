@@ -4,3 +4,5 @@ machine_written/
 net_training.pyc
 test.txt
 *.pyc
+get_chars.pyc
+test.txt
