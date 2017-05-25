@@ -22,7 +22,7 @@ def neural_predict(im,model):
     im = im / np.max(im)    
     
     im = utils.rescale(im.astype(float),(64,64))
-    gc.plt_i(im)
+
     im = np.reshape(im,(1,4096))
     
     letter = trans_table[net.net_predict(im,model)]
@@ -34,7 +34,9 @@ def main():
         "TEST_MODE": {
             "line_detect":False,
             "word_detect":False,
-            "char_detect":False
+            "char_detect":False,
+            
+            "im_treatement":False,
         },
         
         "new_net":False,

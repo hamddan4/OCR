@@ -34,7 +34,8 @@ def plt_s(regions):
         plt.hold(True)
     plt.hold(False)
     
-def resizing(im, contour):
+def resizing(im, params):
+    contour = params["contour"]
     x, y = im.shape
     dismx = x / contour
     dimx = x / dismx
@@ -75,28 +76,32 @@ def split_im_regions(im, regions, mean_height):
         
     return im_list
     
-def apply_threshold(im):
+def apply_threshold(im,params):
     x, y = im.shape
     
     ws = x / 10
     ws = ws + np.uint(not(ws%2))
     
     sauv = filters.threshold_sauvola(im, window_size = ws)
-    plt_i(sauv)
-    plt.title('sauvola');
+    
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(sauv) 
+        plt.title('sauvola')
+    
     res = im>sauv
     #kernel = np.ones((6,1),np.uint8)
     return res
 
-def noise_removal(im):
+def noise_removal(im, params):
     im = np.uint8(im*255)
     
     blur = cv2.GaussianBlur(im,(9,9),0)
     ret2,th2 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     
     imb = (im + th2)
-    plt_i(imb)
-    plt.title('Otsu thresholding + Gaussian filtering');
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(imb)
+        plt.title('Otsu thresholding + Gaussian filtering')
 
     #Fem un close per detectar regions o taques massa grans
     x, y = im.shape
@@ -104,8 +109,9 @@ def noise_removal(im):
     kernel = np.ones((sz,sz),np.uint8)
     imc = cv2.erode(imb,kernel,1)
     
-    plt_i(imc)
-    plt.title('noise closed')
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(imc) 
+        plt.title('noise closed')
     
     neg = (255-imc)/255
     label_image = label(neg)
@@ -243,24 +249,28 @@ def get_all(params):
     *BETA 1. BY THE MOMENT IT ONLY RETURNS THE IMAGES OF LETTERS*
     '''
     im = color.rgb2gray(io.imread("./img/"+params["image_name"]))
-    plt_i(im)
-    plt.title('original');
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(im)
+        plt.title('original')
     
 #    im = neutre(im)
 #    plt_i(im)
 #    plt.title('neutre');
     
-    im = resizing(im, params['contour'])
-    plt_i(im)
-    plt.title('resized')
+    im = resizing(im, params)
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(im)
+        plt.title('rezised')
     
-    im = apply_threshold(im)
-    plt_i(im)
-    plt.title('thresholded');
+    im = apply_threshold(im, params)
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(im)
+        plt.title('thresholded')
 #    plt.close('all')    
-    im = noise_removal(im)
-    plt_i(im)
-    plt.title('noise romved');
+    im = noise_removal(im, params)
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(im)
+        plt.title('noise removed')
     
     
 #    imb, mean_height = close_vert_median(imb)
