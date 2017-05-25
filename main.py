@@ -19,8 +19,10 @@ lines = []
 trans_table = list(string.digits)+list(string.ascii_uppercase)+list(string.ascii_lowercase)
 
 def neural_predict(im,model):    
-    im = utils.rescale(im.astype(float),(64,64))
+    im = im / np.max(im)    
     
+    im = utils.rescale(im.astype(float),(64,64))
+    gc.plt_i(im)
     im = np.reshape(im,(1,4096))
     
     letter = trans_table[net.net_predict(im,model)]
