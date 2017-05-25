@@ -8,15 +8,24 @@
 
 import get_chars as gc
 import string 
+import net_training as net
+import numpy as np
+import utils 
 reload(gc)
 
 import matplotlib.pyplot as plt
 
 lines = []
-trans_table = range(0,10)+list(string.ascii_uppercase)+list(string.ascii_lowercase)
+trans_table = list(string.digits)+list(string.ascii_uppercase)+list(string.ascii_lowercase)
 
-def neural_predict():
-    return "X"
+def neural_predict(im,model):    
+    im = utils.rescale(im.astype(float),(64,64))
+    
+    im = np.reshape(im,(1,4096))
+    
+    letter = trans_table[net.net_predict(im,model)]
+    return letter
+    
 def main():
     global lines
     params = {
@@ -27,7 +36,7 @@ def main():
         },
         
         "new_net":False,
-        "image_name": "brut.png",
+        "image_name": "Practica5-1.png",
         
         "threshold":128
     }
@@ -39,15 +48,17 @@ def main():
     lines = gc.get_all(params)
     
     f = open("test.txt","w") 
+    model = net.loadmodel('model')
     
     for line in lines:
         for word in line:
             for letter in word:
-                result = neural_predict()
+                result = neural_predict(letter,model)
                 f.write(result)
             f.write(" ")
         f.write("\n")
     f.close()
+
     
 if __name__ == "__main__":
     main()

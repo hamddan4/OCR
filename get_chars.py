@@ -11,7 +11,6 @@ from skimage.morphology import label
 from skimage.measure import regionprops
 
 import cv2
-import cv
 
 import scipy.ndimage as nd
 import skimage.filters as sfilter
