@@ -25,9 +25,9 @@ def main():
         },
         
         "new_net":False,
-        "image_name": "brut.png",
+        "image_name": "Practica5-1.png",
         
-        "threshold":128
+        "contour" : 2200
     }
    
     max_plots = 0
