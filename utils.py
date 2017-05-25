@@ -17,22 +17,23 @@ def oddNum(number):
     return number + np.uint(not(number%2))
 
 
-def rescale(im,final_size):
+def rescale(im,final_size,padding):
     sy,sx = final_size
+    sy,sx = sy-padding,sx-padding
     
-    if(np.shape(im) != final_size):
+    if(np.shape(im) != (sy,sx)):
         modified_im = np.ones(final_size)
         current_size = np.shape(im)
         
         if(current_size[1]>current_size[0]):
-            im = cv2.resize(im,(sx,evenNum(int(sx*current_size[0]/sy))))
+            im = cv2.resize(im,(sx,int(sx*current_size[0]/current_size[1])))
         else:
-            im = cv2.resize(im,(evenNum(int(sy*current_size[1]/sx)),sy))
+            im = cv2.resize(im,(int(sy*current_size[1]/current_size[0]),sy))
             
-        xmid = int(round(np.shape(modified_im)[0]/2))
-        ymid = int(round(np.shape(modified_im)[1]/2))            
-        modified_im[(xmid-int(np.floor(np.shape(im)[0]/2))):(xmid+int(np.floor(np.shape(im)[0]/2))),
-                    (ymid-int(np.floor(np.shape(im)[1]/2))):(ymid+int(np.floor(np.shape(im)[1]/2)))] = im 
+        xmid = int((sx+padding)/2)
+        ymid = int((sy+padding)/2)            
+        modified_im[(xmid-int(np.shape(im)[0]/2)):(xmid+int(np.ceil(np.shape(im)[0]/2.0))),
+                    (ymid-int(np.shape(im)[1]/2)):(ymid+int(np.ceil(np.shape(im)[1]/2.0)))] = im 
             
     return modified_im
     
