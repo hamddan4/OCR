@@ -3,3 +3,4 @@ test.txt
 machine_written/
 net_training.pyc
 test.txt
+*.pyc
