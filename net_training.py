@@ -174,7 +174,8 @@ def net_retrain(x,y,namemodel,augmentation):
         history = model.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
                             samples_per_epoch=len(x_train),
                             epochs=epochs, 
-                            validation_data=(x_test, y_test),
+                            validation_data=datagen.flow(x_test, y_test),
+                            validation_steps=int(np.shape(y_test)[0]/batch_size),
                             verbose=1)
     else:
         history = model.fit(x_train, y_train,    

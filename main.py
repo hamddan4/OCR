@@ -75,7 +75,7 @@ def main():
     lines = gc.get_all(im, params)
     
     f = open("test.txt","w") 
-    model = net.loadmodel('modelRetrained')
+    model = net.loadmodel('modelRetrainedRetrained')
     
     for line in lines:
         for word in line:
