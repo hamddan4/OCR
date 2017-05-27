@@ -23,10 +23,10 @@ def getImagesDataset():
     i = 0
     for folder_content in iterator:
         folder_path = folder_content[0] 
-        y.append((len(folder_content[2])/4)*[i])
+        y.append((len(folder_content[2])/2)*[i])
         i+=1
         print(str(i)+" de 62")
-        half_folder = folder_content[2][0:(len(folder_content[2])/4)]
+        half_folder = folder_content[2][(len(folder_content[2])/2):-1]
         for image in half_folder:   
             im = Image.open(folder_path+'/'+image)
             x.append(np.array(im.getdata(),dtype='float32'))
