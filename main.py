@@ -22,7 +22,7 @@ def neural_predict(im,model):
     im = im / np.max(im)    
     
     im = utils.rescale(im.astype(float),(64,64),4)
-#    gc.plt_i(im)
+    gc.plt_i(im)
     im = np.reshape(im,(1,64,64,1))
     
     letter = trans_table[net.net_predict(im,model)]
@@ -41,7 +41,7 @@ def main():
         },
         
         "new_net":False,
-        "image_name": "Practica5-2.png",
+        "image_name": "Practica5-1.png",
         
         "contour" : 2200
     }

@@ -13,6 +13,7 @@ import numpy as np
 import keras
 import keras.initializers as inits
 
+from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Dropout,Flatten
 from keras.layers import Conv2D, MaxPooling2D
@@ -20,7 +21,7 @@ from keras.optimizers import RMSprop,Adadelta,SGD
 from keras.models import model_from_json
 
 
-batch_size = 256
+batch_size = 128
 
 num_classes = 62
 
@@ -60,12 +61,7 @@ def net_predict(im_char,model):
     
     return char_predicted
     
-    
-def net_train(x,y):
-        
-    x /= 255
-    
-    y = keras.utils.to_categorical(y, num_classes)
+def data_split_shuffle(x,y,percent):
     
     randlist = np.arange(0,np.shape(x)[0])
     np.random.shuffle(randlist)
@@ -73,18 +69,33 @@ def net_train(x,y):
     x = x[randlist]
     y = y[randlist]
     
-    x_train = x[1:np.shape(x)[0]*0.7]
+    x_train = x[1:np.shape(x)[0]*percent]
     x_train = np.reshape(x_train,(np.shape(x_train)[0],64,64,1))    
-    x_test = x[np.shape(x)[0]*0.7:-1]
+    x_test = x[np.shape(x)[0]*percent:-1]
     x_test = np.reshape(x_test,(np.shape(x_test)[0],64,64,1))
     
-    y_train = y[1:np.shape(y)[0]*0.7]    
-    y_test = y[np.shape(y)[0]*0.7:-1]
+    y_train = y[1:np.shape(y)[0]*percent]    
+    y_test = y[np.shape(y)[0]*percent:-1]
     
+    return x_train,y_train,x_test,y_test
     
+def net_train(x,y,augmentation):
         
+    x /= 255
+    y = keras.utils.to_categorical(y, num_classes)
+    
+    x_train,y_train,x_test,y_test = data_split_shuffle(x,y,0.7)
+    
     print(x_train.shape[0], 'train samples')    
     print(x_test.shape[0], 'test samples')
+    
+    if(augmentation):
+        datagen = ImageDataGenerator(
+            rotation_range = 20,
+            width_shift_range = 0.15,
+            height_shift_range = 0.15,
+            shear_range = 0.4,
+            zoom_range = 0.3)    
     
     #builds the neural network layers
         
@@ -109,19 +120,24 @@ def net_train(x,y):
     model.summary()
     
     
-    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+#    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy',    
-                  optimizer=sgd,    
+                  optimizer='adamax',    
                   metrics=['accuracy'])
     
     
-    
-    history = model.fit(x_train, y_train,    
+    if(augmentation):
+        history = model.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
+                            samples_per_epoch=len(x_train),
+                            epochs=epochs, 
+                            validation_data=(x_test, y_test),
+                            verbose=1)
+    else:
+        history = model.fit(x_train, y_train,    
                         batch_size=batch_size,    
                         epochs=epochs,    
                         verbose=1,    
                         validation_data=(x_test, y_test))
-    
     
     savemodel('model',model)
     
@@ -132,3 +148,47 @@ def net_train(x,y):
     print('Test accuracy:', score[1])
     
     return history
+    
+    
+def net_retrain(x,y,namemodel,augmentation):
+    
+    model = loadmodel(namemodel)
+    
+    x /= 255
+    y = keras.utils.to_categorical(y, num_classes)
+    
+    x_train,y_train,x_test,y_test = data_split_shuffle(x,y,0.7)
+    
+    print(x_train.shape[0], 'train samples')    
+    print(x_test.shape[0], 'test samples')    
+    
+    model.compile(loss='categorical_crossentropy',    
+              optimizer='adamax',    
+              metrics=['accuracy'])
+    
+    if(augmentation):
+        datagen = ImageDataGenerator(
+            rotation_range = 20,
+            width_shift_range = 0.15,
+            height_shift_range = 0.15,
+            shear_range = 0.4,
+            zoom_range = 0.3)  
+            
+        history = model.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
+                            samples_per_epoch=len(x_train),
+                            epochs=epochs, 
+                            validation_data=(x_test, y_test),
+                            verbose=1)
+    else:
+        history = model.fit(x_train, y_train,    
+                        batch_size=batch_size,    
+                        epochs=epochs,    
+                        verbose=1,    
+                        validation_data=(x_test, y_test))
+        
+        
+    return history
+    
+    
+    
+    

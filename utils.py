@@ -6,9 +6,6 @@
 
 import numpy as np
 import cv2
-from skimage import color, filters, io
-import matplotlib.pyplot as plt
-import get_chars as gc
 
 def evenNum(number):
     return number + (number%2)
