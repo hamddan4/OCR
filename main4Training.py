@@ -6,7 +6,10 @@
 
 import dataset
 import net_training
+import matplotlib.pyplot as plt
 
 x,y = dataset.getImagesDataset()
 
-net_training.net_train(x,y)
+history = net_training.net_train(x,y)
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])

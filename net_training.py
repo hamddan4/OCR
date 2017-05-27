@@ -14,11 +14,9 @@ import keras
 import keras.initializers as inits
 
 from keras.models import Sequential
-
-from keras.layers import Dense, Dropout
-
-from keras.optimizers import RMSprop,Adadelta
-
+from keras.layers import Dense, Dropout,Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras.optimizers import RMSprop,Adadelta,SGD
 from keras.models import model_from_json
 
 
@@ -26,9 +24,7 @@ batch_size = 256
 
 num_classes = 62
 
-epochs = 30 
-
-translation_table = range(0,10)+list(string.ascii_uppercase)+list(string.ascii_lowercase)
+epochs = 15 
 
 def loadmodel(namefile):
     file = open(namefile+'.json','r')
@@ -40,7 +36,10 @@ def loadmodel(namefile):
     model = model_from_json(json_string)
     model.load_weights(namefile+'config')
     
-    model.compile(loss='categorical_crossentropy',optimizer=RMSprop(),metrics=['accuracy'])    
+    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    model.compile(loss='categorical_crossentropy',    
+                  optimizer=sgd,    
+                  metrics=['accuracy'])  
     return model
 
 
@@ -55,7 +54,7 @@ def savemodel(namefile,model):
     
     
 def net_predict(im_char,model):
-    prediction = model.predict(np.array([im_char][0])) #habra que revisar este rollo de los corchetes en el futuro
+    prediction = model.predict(np.array([im_char][0]))
       
     char_predicted = np.argmax(prediction,axis=1)[0]
     
@@ -74,11 +73,15 @@ def net_train(x,y):
     x = x[randlist]
     y = y[randlist]
     
-    x_train = x[1:np.shape(x)[0]*0.7]    
+    x_train = x[1:np.shape(x)[0]*0.7]
+    x_train = np.reshape(x_train,(np.shape(x_train)[0],64,64,1))    
     x_test = x[np.shape(x)[0]*0.7:-1]
+    x_test = np.reshape(x_test,(np.shape(x_test)[0],64,64,1))
     
     y_train = y[1:np.shape(y)[0]*0.7]    
     y_test = y[np.shape(y)[0]*0.7:-1]
+    
+    
         
     print(x_train.shape[0], 'train samples')    
     print(x_test.shape[0], 'test samples')
@@ -87,25 +90,28 @@ def net_train(x,y):
         
     model = Sequential()
     
-    model.add(Dense(1024, activation='relu', input_dim=4096,kernel_initializer=inits.he_normal()))
-    model.add(Dropout(0.2))
+    model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(64, 64, 1)))
+    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
     
-    model.add(Dense(256, activation='relu',kernel_initializer=inits.he_normal()))    
-    model.add(Dropout(0.2))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
     
-    model.add(Dense(512, activation='relu',kernel_initializer=inits.he_normal()))    
-    model.add(Dropout(0.2))
-    
-    
-        
-    model.add(Dense(62, activation='softmax',kernel_initializer=inits.he_normal()))
+    model.add(Flatten())
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(num_classes, activation='softmax'))
+
     
     model.summary()
     
     
-    
+    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy',    
-                  optimizer=Adadelta(),    
+                  optimizer=sgd,    
                   metrics=['accuracy'])
     
     
@@ -124,3 +130,5 @@ def net_train(x,y):
     print('Test loss:', score[0])
     
     print('Test accuracy:', score[1])
+    
+    return history
