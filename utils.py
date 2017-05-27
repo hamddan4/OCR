@@ -6,6 +6,7 @@
 
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 def evenNum(number):
     return number + (number%2)
@@ -35,4 +36,15 @@ def rescale(im,final_size,padding):
                     (ymid-int(np.shape(im)[1]/2)):(ymid+int(np.ceil(np.shape(im)[1]/2.0)))] = im 
             
     return modified_im
-    
+ 
+max_plots = 0
+def plt_i(im,title=None):
+    global max_plots
+    max_plots += 1
+    if(max_plots < 20):
+        plt.figure(), plt.imshow(im,cmap=plt.cm.gray)
+    else:
+        raise Exception("Too many plots are open! I might just saved your ass here...")
+#        pass
+    if not(title == None):
+        plt.title(title)   
