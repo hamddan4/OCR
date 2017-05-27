@@ -43,7 +43,7 @@ def main():
         "new_net":False,
         "image_name": "Practica5-1.png",
         
-        "contour" : 2200
+        "contour" : None
     }
    
     max_plots = 0
