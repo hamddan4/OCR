@@ -15,6 +15,8 @@ import numpy
 import matplotlib.pyplot as plt
 from matplotlib.mlab import rms_flat
 
+from im_treatement import resizing
+
 from get_chars import plt_i
 
 try:
@@ -34,14 +36,13 @@ def get_rotation(im,params):
     
     I = I - mean(I)  # Demean; make the brightness extend above and below zero
     
-    plt.figure()
-    if(params["TEST_MODE"]["rotation"]):
-        plt.subplot(1, 2, 1)
-        plt.imshow(I)
     # Do the radon transform and display the result
     sinogram = radon(I)
     
     if(params["TEST_MODE"]["rotation"]):
+        plt.figure()
+        plt.subplot(1, 2, 1)
+        plt.imshow(I)
         plt.subplot(1, 2, 2)
         plt.imshow(sinogram.T, aspect='auto')
         plt.gray()
@@ -57,7 +58,9 @@ def get_rotation(im,params):
 
 def fix_rotation(im, params):
     
-    rotation = get_rotation(im, params)
+    im_small = resizing(im, 400)
+    
+    rotation = get_rotation(im_small, params)
     
     imr = rotate(im, 90-rotation, preserve_range=True)
     

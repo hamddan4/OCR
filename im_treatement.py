@@ -2,8 +2,7 @@ from utils import plt_i
 import numpy as np
 import cv2
 
-def resizing(im, params):
-    contour = params["contour"]
+def resizing(im, contour):
     im2 = im
     if(contour != None):
         x, y = im.shape
@@ -38,7 +37,7 @@ def treatement(im, params):
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "original")
     
-    im = resizing(im, params)
+    im = resizing(im, params["contour"])
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "resized")
     

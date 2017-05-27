@@ -49,9 +49,9 @@ def main():
             "word_detect":False,
             "char_detect":False,
             
-            "im_treatement":True,
+            "im_treatement":False,
             
-            "rotation":True,
+            "rotation":False,
         },
         
         "new_net":False,
