@@ -6,3 +6,4 @@ test.txt
 *.pyc
 get_chars.pyc
 test.txt
+net_training.pyc
