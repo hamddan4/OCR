@@ -88,14 +88,13 @@ def split_im_regions(im, regions, mean_height):
     im_list = []
     for i in range(len(regions)):
         minr, minc, maxr, maxc = regions[i]['BoundingBox']
-        charac = im[(minr):(maxr+1),(minc):(maxc+1)]
+        charac = im[(minr):(maxr),(minc):(maxc)]
         im_list.append(charac)
         
     return im_list
     
 def apply_threshold(im,params):
     x, y = im.shape
-    print im
     ws = oddNum(x / 10)
     
     sauv = filters.threshold_sauvola(im, window_size = ws)
@@ -133,12 +132,11 @@ def del_big_spots(im, params):
     im2 = np.uint8(remove_small_holes(imb,  thr))
     res= np.array(np.array((1-im2 + im), dtype=bool), dtype=np.uint8)
     
-    plt_i(im,"im")
-    plt_i(imb,"imb")
-    plt_i(im2,"imb2")
-    plt_i(res, "res")
-#    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(2,2))
-#    im3 = cv2.erode(im3,kernel,1)
+#    plt_i(im,"im")
+#    plt_i(imb,"imb")
+#    plt_i(im2,"imb2")
+#    plt_i(res, "res")
+    
     return res
 
 def del_small_spots(im, params):
@@ -189,7 +187,7 @@ def get_lines(params, im, mean_height):
     ws = x / 220
     
     g10 = nd.filters.gaussian_filter(imy, ws, order=(1,0))
-    gbin = g10>0
+    gbin = g10<0
     label_image = label(gbin, connectivity = 2)
     regions = regionprops(label_image)
         
@@ -214,22 +212,19 @@ def get_lines(params, im, mean_height):
     return line_im_list
 
 def get_words_from_line(params, im):
-    
-    imb = 255-im
-    
+        
     kernel = np.ones((2,2),np.uint8)
 #    imd = cv2.dilate(np.int16(imb),kernel,1)
     
-    imd1, mean_height = close_vert_median(imb)
+    imd1, mean_height = close_vert_median(im)
     
     kernel = np.ones((1,int(mean_height/1.35)),np.uint8)
     imd2 = cv2.dilate(np.int16(imd1),kernel,1)
 
     if(params["TEST_MODE"]["word_detect"]):
-        plt_i(im)
-        plt_i(imb)
-        plt_i(imd1)
-        plt_i(imd2)
+        plt_i(im,"word_detect im")
+        plt_i(imd1,"word_detect im1")
+        plt_i(imd2,"word_detect im2")
     
     label_image = label(imd2, connectivity = 2)
     regions = regionprops(label_image)
@@ -240,11 +235,8 @@ def get_words_from_line(params, im):
 
 def get_letters(params, im):
     
-    
-    imb = 255-im
-    
     #detect if they are itallics
-    imd1, mean_height = close_vert_median(imb)
+    imd1, mean_height = close_vert_median(im)
     labels1 = label(imd1, connectivity = 2)
     regions1 = regionprops(labels1)
     m_height1, m_width1 = get_means(regions1)
@@ -326,13 +318,17 @@ def get_all(params):
         plt.title('small spots deleted')
     
     
-        
-    imb, mean_height = close_vert_median(im)
-    label_image = label(im)
+    imn = 1-im
+    imb, mean_height = close_vert_median(imn)
+    label_image = label(imb)
     regions = regionprops(label_image)
     height, width = get_means(regions)
     
-    lines = get_lines(params, im, height)
+    
+    #PER MILLORAR L'AGILITAT, LES IMATGES ES PASSARAN EN FORMAT NEGATIU (IMN)
+    
+    
+    lines = get_lines(params, imn, height)
     
     for i in range(len(lines)):
         try:
@@ -340,6 +336,8 @@ def get_all(params):
             for j in range(len(words)):
                 try: 
                     letters = get_letters(params, words[j])
+                    for k in range(len(letters)):
+                        letters[k] = 1-letters[k]
                     words[j] = letters
                 except ValueError:
                     del words[j]
@@ -348,6 +346,8 @@ def get_all(params):
             pass
         lines[i] = words        
 
+        
+    
     return lines
 
 
