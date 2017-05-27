@@ -14,15 +14,26 @@ import utils
 reload(gc)
 
 import matplotlib.pyplot as plt
+from skimage import io
+import cv2
+
+import rotation
+reload(rotation)
+import im_treatement
+reload(im_treatement)
+import morf
+reload(morf)
+
 
 lines = []
 trans_table = list(string.digits)+list(string.ascii_uppercase)+list(string.ascii_lowercase)
+
+
 
 def neural_predict(im,model):    
     im = im / np.max(im)    
     
     im = utils.rescale(im.astype(float),(64,64),4)
-    gc.plt_i(im)
     im = np.reshape(im,(1,64,64,1))
     
     letter = trans_table[net.net_predict(im,model)]
@@ -37,7 +48,9 @@ def main():
             "word_detect":False,
             "char_detect":False,
             
-            "im_treatement":False,
+            "im_treatement":True,
+            
+            "rotation":True,
         },
         
         "new_net":False,
@@ -46,11 +59,19 @@ def main():
         "contour" : None
     }
    
-    max_plots = 0
 #    if(params["new_net"]):
 #        nt.net_train()
-    plt.close('all')        
-    lines = gc.get_all(params)
+    plt.close('all') 
+    
+    im = io.imread("./img/"+params["image_name"])
+    if(len(im.shape) != 2):
+        im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
+    
+    im = rotation.fix_rotation(im, params)
+    im = im_treatement.treatement(im, params)    
+    im = morf.apply_morf(im, params)
+    
+    lines = gc.get_all(im, params)
     
     f = open("test.txt","w") 
     model = net.loadmodel('model')
