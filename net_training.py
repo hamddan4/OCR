@@ -37,9 +37,9 @@ def loadmodel(namefile):
     model = model_from_json(json_string)
     model.load_weights(namefile+'config')
     
-    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+#    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy',    
-                  optimizer=sgd,    
+                  optimizer='adamax',    
                   metrics=['accuracy'])  
     return model
 
@@ -162,9 +162,6 @@ def net_retrain(x,y,namemodel,augmentation):
     print(x_train.shape[0], 'train samples')    
     print(x_test.shape[0], 'test samples')    
     
-    model.compile(loss='categorical_crossentropy',    
-              optimizer='adamax',    
-              metrics=['accuracy'])
     
     if(augmentation):
         datagen = ImageDataGenerator(
@@ -185,6 +182,14 @@ def net_retrain(x,y,namemodel,augmentation):
                         epochs=epochs,    
                         verbose=1,    
                         validation_data=(x_test, y_test))
+                        
+    savemodel(str(namemodel)+'Retrained',model)
+    
+    score = model.evaluate(x_test, y_test, verbose=0)
+    
+    print('Test loss:', score[0])
+    
+    print('Test accuracy:', score[1])
         
         
     return history
