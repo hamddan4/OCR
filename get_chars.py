@@ -166,6 +166,7 @@ def get_all(im, params):
     im : numpy.uint8 image values where low values are the letters
     params : data struct used for debugging
     '''    
+    if(params["status_msg"]): print "Getting Chars Activated."
     
     imn = 1-im
     imb, mean_height = close_vert_median(imn)
@@ -176,45 +177,25 @@ def get_all(im, params):
     im_lines = get_lines(params, imn, height)
     
     structure = []
-#    
-#    for i in range(len(lines)):
-##        try:
-#        if not(lines[i].diagonal().shape == (1L,)):
-#            print "words"
-#            words = get_words_from_line(params, lines[i])
-#        else:
-#            del lines[i] 
-#            i = i-1
-#            #: Mirar que si fent aixo, es salta la seguent iteracio
-#            # ja que eliminem un element de la llista i abancem
-#        r = range(len(words))
-#        for j in r:
-#            try: 
-#                print len(words), j,len(words[j])
-#                words[j] = np.array(words[j])
-#                letters = get_letters(params, words[j])
-#                for k in range(len(letters)):
-#                    letters[k] = 1-letters[k]
-#                words[j] = letters
-#            except ValueError:
-#                print "down"
-#                print words[j]
-#                del words[j]
-#                r.pop()
-##        except ValueError:
-##            pass
-#        lines[i] = words  
+
     for im_line in im_lines:
         if not(im_line.diagonal().shape == (1L,)): 
             if(np.max(im_line) == 1):
+                
                 im_words = get_words_from_line(params, im_line)
                 list_letters = []
                 for im_word in im_words:
-                    im_letters = get_letters(params, im_word)
-                    for i in range(len(im_letters)):
-                        im_letters[i] = 1-im_letters[i]
-                    list_letters.append(im_letters)
+                    if not(im_word.diagonal().shape == (1L,)): 
+                        if(np.max(im_word) == 1):
+                            
+                            im_letters = get_letters(params, im_word)
+                            for i in range(len(im_letters)):
+                                im_letters[i] = 1-im_letters[i]
+                            list_letters.append(im_letters)
                 structure.append(list_letters) 
+    
+    if(params["status_msg"]): print "Getting Chars OK."
+    
     return structure
 
 

@@ -39,6 +39,12 @@ def get_rotation(im,params):
     # Do the radon transform and display the result
     sinogram = radon(I)
     
+    # Find the RMS value of each row and find "busiest" rotation,
+    # where the transform is lined up perfectly with the alternating dark
+    # text and white lines
+    r = array([rms_flat(line) for line in sinogram.transpose()])
+    rotation = argmax(r)
+    
     if(params["TEST_MODE"]["rotation"]):
         plt.figure()
         plt.subplot(1, 2, 1)
@@ -46,22 +52,29 @@ def get_rotation(im,params):
         plt.subplot(1, 2, 2)
         plt.imshow(sinogram.T, aspect='auto')
         plt.gray()
-    
-    # Find the RMS value of each row and find "busiest" rotation,
-    # where the transform is lined up perfectly with the alternating dark
-    # text and white lines
-    r = array([rms_flat(line) for line in sinogram.transpose()])
-    rotation = argmax(r)
-    plt.axhline(rotation, color='r')
-    
+        plt.axhline(rotation, color='r')
+        
     return rotation
 
 def fix_rotation(im, params):
+    if(params["status_msg"]): print("Rotation Module Activated: Get Skew Angle")
     
-    im_small = resizing(im, 400)
+    x, y = im.shape
+    sz = 400
     
+    if(x>sz):
+        im_small = resizing(im, sz)
+    else:
+        im_small = im
     rotation = get_rotation(im_small, params)
     
+    if(params["status_msg"]): print("Rotating: ", 90-rotation)
+    
+    if(params["TEST_MODE"]["rotation"]):
+        print("Rotation Angle: ", 90-rotation)
     imr = rotate(im, 90-rotation, preserve_range=True)
+    
+    if(params["status_msg"]): print("Rotation OK")
+    
     
     return imr
