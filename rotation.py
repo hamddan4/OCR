@@ -31,6 +31,14 @@ except ImportError:
 filename = 'img/skew.png'
 
 def get_rotation(im,params):
+    """
+    Funcio que descobreix la rotacio de la imatge amb la transformada de redo
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parametres
+    *Outputs:
+    - rotation = angle de rotacio
+    """
 
     I = asarray(im)
     
@@ -57,6 +65,15 @@ def get_rotation(im,params):
     return rotation
 
 def fix_rotation(im, params):
+    """
+    Rota la imatge perque les linies estiguin horitzontalment
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de paràmetres
+    *Outputs:
+    - im = imatge amb el text amb orientacio horitzontal 
+    """
+    
     if(params["status_msg"]): print("Rotation Module Activated: Get Skew Angle")
     
     x, y = im.shape

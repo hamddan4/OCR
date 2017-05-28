@@ -16,6 +16,11 @@ import cv2
 import scipy.ndimage as nd
 
 def plt_s(regions):
+    """
+    A partir d'unes regions, les printa al plot
+    * Inputs:
+    - regions = list of props of regionprops
+    """
     for prop in regions:
         plt.plot(prop['centroid'][1],prop['centroid'][0],marker='o')
         minr, minc, maxr, maxc = prop['BoundingBox']
@@ -28,12 +33,28 @@ def plt_s(regions):
 
 
 def get_h_w(region):
+    """
+    A partir d'una regió, calcula l'alcada i l'amplada
+    * Inputs:
+    - regions = list of props of regionprops
+    *Outputs:
+    - height = alcada de regio
+    - width = amplada de regio
+    """
     minr, minc, maxr, maxc = region['BoundingBox']
     height = int(maxc-minc)
     width = int(maxr-minr)
     return height, width
     
 def get_lists_regions(regions):
+    """
+    A partir d'unes regions, retorna una llista amb alcades i amplades
+    * Inputs:
+    - regions = list of props of regionprops
+    *Outputs:
+    - m_height = mitjana d'alcada
+    - m_width = mitjana d'amplada
+    """
     height = []
     width = []
     for prop in regions:      
@@ -43,6 +64,14 @@ def get_lists_regions(regions):
     
     return height, width
 def get_medians(regions):
+    """
+    A partir d'unes regions, retorna la mediana d'alcada i amplada
+    * Inputs:
+    - regions = list of props of regionprops
+    *Outputs:
+    - m_height = mediana d'alcada
+    - m_width = mediana d'amplada
+    """
     
     height, width = get_lists_regions(regions)
     
@@ -51,6 +80,14 @@ def get_medians(regions):
     return m_height, m_width
 
 def get_means(regions):
+    """
+    A partir d'unes regions, retorna la mitjana d'alcada i amplada
+    * Inputs:
+    - regions = list of props of regionprops
+    *Outputs:
+    - m_height = mitjana d'alcada
+    - m_width = mitjana d'amplada
+    """
     
     height, width = get_lists_regions(regions)
     
@@ -58,7 +95,17 @@ def get_means(regions):
     m_width = np.mean(width)
     return m_height, m_width
     
-def split_im_regions(im, regions, mean_height):
+def split_im_regions(im, regions, mean_height=1):
+    """
+    A partir d'unes regions i una imatge, retorna les imatges retallades de les 
+    regions. Mean height ha quedat deprecated
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parametres
+    - mean_height = deprecated
+    *Outputs:
+    - im_list = llista de imatges
+    """
     im_list = []
     for i in range(len(regions)):
         minr, minc, maxr, maxc = regions[i]['BoundingBox']
@@ -68,6 +115,15 @@ def split_im_regions(im, regions, mean_height):
     return im_list
     
 def close_vert_median(im):
+    """
+    Closing vertical de la imatge a partir de la mediana de les regions de la
+    mateixa.
+    * Inputs:
+    - im = skimage.io image
+    *Outputs:
+    - im = imatge amb closing
+    - kern_siz = mediana
+    """
     if not(im.diagonal().shape == (1L,)):
         #Labeling the image in order to get mean of height of the regions
     
@@ -90,6 +146,14 @@ def close_vert_median(im):
     return im, kern_siz
 
 def get_lines(params, im, mean_height):
+    """
+    A partir d'una imatge, n'extreu les frases
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parametres
+    *Outputs:
+    - line_im_list = llista de caracters
+    """
     #We will apply y-derivative of gaussian filter
     
     imy = np.zeros(im.shape,dtype=np.float64)
@@ -138,7 +202,15 @@ def get_lines(params, im, mean_height):
     return line_im_list
 
 def get_words_from_line(params, im):
-       
+    """
+    A partir d'una frase, n'extreu les paraules
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parmetres
+    *Outputs:
+    - word_im_list = llista de paraules
+    """
+    
     kernel = np.ones((2,2),np.uint8)
 #    imd = cv2.dilate(np.int16(imb),kernel,1)
     
@@ -170,6 +242,14 @@ def get_words_from_line(params, im):
     return word_im_list
 
 def get_letters(params, im):
+    """
+    A partir d'una paraula, n'extreu les lletres
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de paràmetres
+    *Outputs:
+    - ch_im_list = llista de caracters
+    """
     
     #detect if they are itallics
     x, y = im.shape

@@ -7,6 +7,14 @@ from skimage.morphology import remove_small_holes, label
 from skimage.measure import regionprops
 
 def apply_threshold(im,params):
+    """
+    Aplica un threshold Sauvola (threshold local) sobre la imatge
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parametres
+    *Outputs:
+    - res = resultat del threshold binari
+    """
     x, y = im.shape
     ws = oddNum(x / 10)
     
@@ -21,6 +29,15 @@ def apply_threshold(im,params):
     return res
     
 def del_big_spots(im, params):
+    """
+    A partir d'una imatge binaria, treu les taques que son massa GRANS
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de paràmetres
+    *Outputs:
+    - im = resultat de la imatge sense taques grans
+    """
+    
     #Fem un close per detectar regions o taques massa grans
     im = np.array(im, dtype=np.uint8)
     kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(2,2))
@@ -45,6 +62,15 @@ def del_big_spots(im, params):
     return res
 
 def del_small_spots(im, params):
+    """
+    A partir d'una imatge binaria, extreu les taques PETITES estadisticament
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de paràmetres
+    *Outputs:
+    - im2 = resultat de treure les imatges petites de im
+    """
+    
     #Fem un close per detectar regions o taques massa grans
 
     
@@ -66,6 +92,15 @@ def del_small_spots(im, params):
     return im2
     
 def apply_morf(im, params):
+    """
+    Funcio que aplica tots el procedimens morfologics sobre la imatge
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de paràmetres
+    *Outputs:
+    - im = resultat de la imatge un cop ha pasat per tots els processos
+    """
+    
     if(params["status_msg"]): print "Starting Morphology: Sauvola Thresholding"
     
     im = apply_threshold(im, params)

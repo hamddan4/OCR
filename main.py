@@ -49,6 +49,14 @@ global_params = {
 
 
 def neural_predict(im,model):    
+    """
+    Funcio que passa la imatge a la xarxa neuronal i retorna la lletra predita.
+    * Inputs:
+    - im = skimage.io image
+    - model = model neuronal
+    *Outputs:
+    - letter = caracter predit
+    """
     im = im / np.max(im)        
     try:
         im = utils.rescale(im.astype(float),(64,64),4)
@@ -60,8 +68,14 @@ def neural_predict(im,model):
         return "?"
     
 def process_img(im, params=global_params):
-    #    if(params["new_net"]):
-#        nt.net_train()
+    """
+    Funció que fa tot el procediment per obtenir el text de la imatge.
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parametres
+    *Outputs:
+    - text = String amb el text trobat a la imatge
+    """
     plt.close('all') 
     
     if(len(im.shape) != 2):
