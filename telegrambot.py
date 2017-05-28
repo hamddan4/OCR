@@ -22,26 +22,14 @@ def handle(msg):
 
 
     if content_type == 'photo':
-#        message = 'Sending soda to:\n'
-#        print(msg['location']['latitude'])
-#        message += 'latitude: ' + str(msg['location']['latitude']) + '\n'
-#        message += 'longitude: ' + str(msg['location']['longitude'])
-#        
-#        bot.sendMessage(chat_id, message)
-#
-#        bot.sendMessage(chat_id, "Command sent")
-#        if(not test):
-#            ser.write(bytes([255]))
-#            ser.write(struct.pack("f",msg['location']['latitude']))
-#            ser.write(struct.pack("f",msg['location']['longitude']))
-#        
         message = " Let's see... "
         bot.sendMessage(chat_id, message)
         imdir = bot.getFile(msg["photo"][-1]["file_id"])
         print imdir
         num_proc = update_num_proc()
-        urllib.urlretrieve("https://api.telegram.org/file/bot"+ TOKEN + \
-        "/"+ imdir["file_path"], ImageFolder+"/foto_"+str(num_proc)+".jpg")
+        url = "https://api.telegram.org/file/bot"+ TOKEN +"/"+ imdir["file_path"]
+        print url
+        urllib.urlretrieve(url, ImageFolder+"/foto_"+str(num_proc)+".jpg")
 
         im = io.imread(ImageFolder+"/foto_"+str(num_proc)+".jpg")
         
@@ -64,7 +52,13 @@ def handle(msg):
             message += 'letters in the images that you will send to me.\n'
             message += 'Send me an image and let me read it for you!'
             
-            bot.sendMessage(chat_id, message)            
+            bot.sendMessage(chat_id, message)  
+            
+        elif  msg['text'] == "Hola Carambola":
+            bot.sendMessage(chat_id, "hola pepsicola") 
+        else:
+            bot.sendMessage(chat_id, "Sorry, I didn't understand you") 
+            
 TOKEN = '340171475:AAFUDW_HiK1zaP-55plvA0zJNWaIVtQoYF8'
 bot = telepot.Bot(TOKEN)
 print(bot.getMe())

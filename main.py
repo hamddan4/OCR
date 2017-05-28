@@ -40,7 +40,7 @@ global_params = {
         },
         
         "new_net":False,
-        "image_name": "foto_0.jpg",
+        "image_name": "Practica5-1.png",
         
         "contour" : None,
         
@@ -93,7 +93,7 @@ def process_img(im, params=global_params):
 
 def main():
     global lines
-    im = io.imread("./Telegram-Images/"+global_params["image_name"])
+    im = io.imread("./img/"+global_params["image_name"])
 
     text = process_img(im, global_params)
     
