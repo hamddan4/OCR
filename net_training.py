@@ -27,6 +27,9 @@ num_classes = 62
 
 epochs = 15 
 
+#==============================================================================
+# Functions used to load and save models 
+#==============================================================================
 def loadmodel(namefile):
     file = open(namefile+'.json','r')
     json_string = ''
@@ -43,7 +46,6 @@ def loadmodel(namefile):
                   metrics=['accuracy'])  
     return model
 
-
 def savemodel(namefile,model):
         
     json_model = model.to_json()    
@@ -52,17 +54,14 @@ def savemodel(namefile,model):
     file.close()
 
     model.save_weights(namefile+'config')
-    
-    
-def net_predict(im_char,model):
-    prediction = model.predict(np.array([im_char][0]))
-      
-    char_predicted = np.argmax(prediction,axis=1)[0]
-    
-    return char_predicted
-    
+
+#==============================================================================
+
 def data_split_shuffle(x,y,percent):
-    
+    """ 
+    Function used to split and shuffle x and y.
+    The data will be splitted using the porcentage.        
+    """
     randlist = np.arange(0,np.shape(x)[0])
     np.random.shuffle(randlist)
     
@@ -79,8 +78,24 @@ def data_split_shuffle(x,y,percent):
     
     return x_train,y_train,x_test,y_test
     
+def net_predict(im_char,model):
+    """
+    Function used to predict images using the model trainned
+    """
+    prediction = model.predict(np.array([im_char][0]))
+      
+    char_predicted = np.argmax(prediction,axis=1)[0]
+    
+    return char_predicted
+    
+    
 def net_train(x,y,augmentation):
-        
+    """
+    Function used to train the data
+    x is the data to train
+    y is the class of the data
+    augmentation boolean used if you want data augmentation
+    """
     x /= 255
     y = keras.utils.to_categorical(y, num_classes)
     
@@ -151,7 +166,12 @@ def net_train(x,y,augmentation):
     
     
 def net_retrain(x,y,namemodel,augmentation):
-    
+    """
+    Function used to train one more time a model
+    x is the data to train
+    y is the class of the data
+    augmentation boolean used if you want data augmentation
+    """
     model = loadmodel(namemodel)
     
     x /= 255
