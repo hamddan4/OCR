@@ -1,12 +1,6 @@
 test.txt
 *.pyc
 machine_written/
-net_training.pyc
-test.txt
+Telegram-Images/
+Telegram-Text/
 *.pyc
-get_chars.pyc
-test.txt
-net_training.pyc
-*.pyc
-net_training.pyc
-net_training.pyc

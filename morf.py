@@ -64,17 +64,24 @@ def del_small_spots(im, params):
     return im2
     
 def apply_morf(im, params):
+    if(params["status_msg"]): print "Starting Morphology: Sauvola Thresholding"
     
     im = apply_threshold(im, params)
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "thresholded")
+    if(params["status_msg"]): print "Threshold Done, next step: Big Spots Deletion"
     
     im = del_big_spots(im, params)
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "big spots deleted")
+        
+    if(params["status_msg"]): print "Big Spots Deleted, next step: Small Spot Deletion"
             
     im = del_small_spots(im, params)
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "small spots deleted")
+    
+    
+    if(params["status_msg"]): print "Small Spots Deleted. Morphology Done"
     
     return im

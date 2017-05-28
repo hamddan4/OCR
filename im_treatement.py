@@ -32,23 +32,32 @@ def noise_removal(im, params):
     return imb
     
 def treatement(im, params):
+    
+    if(params["status_msg"]): print "Starting im_treatement: Resizing"
+    
     im = np.array(im, dtype=np.uint8)
     
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "original")
     
     im = resizing(im, params["contour"])
+    
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "resized")
+    if(params["status_msg"]): print "Resizing OK. Next step: noise removal"
     
     im = noise_removal(im, params)
+    
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im,'Otsu thresholding + Gaussian filtering \n (noise removed)') 
-
+    if(params["status_msg"]): print "Noise Removal OK. Next step: Neutralizing img"
+    
     im = neutre(im, params)
+    im = np.nan_to_num(im)
+    
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "neutre")
-        
-    im = np.nan_to_num(im)
+    
+    if(params["status_msg"]): print "Neutre OK. im_treatement Done"
     
     return im
