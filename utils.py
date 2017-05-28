@@ -9,13 +9,23 @@ import cv2
 import matplotlib.pyplot as plt
 
 def evenNum(number):
+    """
+    function that returns the more near even number
+    """
     return number + (number%2)
     
 def oddNum(number):
+    """
+    function that returns the more near odd number
+    """
     return number + np.uint(not(number%2))
 
 
 def rescale(im,final_size,padding):
+    """
+    function used to resize with the desired padding a image keeping the input
+    aspect ratio
+    """
     sy,sx = final_size
     sy,sx = sy-padding,sx-padding
     if(np.shape(im) != (sy,sx)):
@@ -36,6 +46,9 @@ def rescale(im,final_size,padding):
  
 max_plots = 0
 def plt_i(im,title=None, maxp=20):
+    """
+    function used to plot a limited quantity of images
+    """
     global max_plots
     max_plots += 1
     if(max_plots < maxp):
