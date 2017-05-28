@@ -29,7 +29,7 @@ def neutre(im, params):
     ha variancies.
     * Inputs:
     - im = skimage.io image
-    - params = diccionari de paràmetres
+    - params = diccionari de parametres
     *Outputs:
     - im = imatge amb color neutralitzat
     """

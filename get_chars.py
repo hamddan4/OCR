@@ -34,7 +34,7 @@ def plt_s(regions):
 
 def get_h_w(region):
     """
-    A partir d'una regió, calcula l'alcada i l'amplada
+    A partir d'una regio, calcula l'alcada i l'amplada
     * Inputs:
     - regions = list of props of regionprops
     *Outputs:
@@ -246,7 +246,7 @@ def get_letters(params, im):
     A partir d'una paraula, n'extreu les lletres
     * Inputs:
     - im = skimage.io image
-    - params = diccionari de paràmetres
+    - params = diccionari de parametres
     *Outputs:
     - ch_im_list = llista de caracters
     """

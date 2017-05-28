@@ -40,9 +40,9 @@ global_params = {
         },
         
         "new_net":False,
-        "image_name": "foto_15.jpg",
+        "image_name": "sign.jpg",
         
-        "contour" : None,
+        "contour" : 1200,
         
         "status_msg" : True
     }
@@ -94,7 +94,7 @@ def process_img(im, params=global_params):
     if(params["status_msg"]): print "Predicting results..."
     if(params["status_msg"]): print "====================="
     
-    model = net.loadmodel('modelRetrainedRetrained')
+    model = net.loadmodel('model')
     text = ""
     for line in lines:
         for word in line:
