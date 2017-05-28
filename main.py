@@ -112,6 +112,15 @@ def process_img(im, params=global_params):
     return text
 
 def main():
+    """
+    Benvingut a l'OCR!
+    Canvia la imatge dessitgada al parametre "image_name" de la variable 
+    global_param i assegurat que aquesta imatge esta a la carpeta ./img
+    
+    Aquesta funcio et guardara a text.txt el resultat de la compilacio. Vagi
+    de gust!
+    
+    """
     global lines
     im = io.imread("./img/"+global_params["image_name"])
 

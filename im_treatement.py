@@ -5,6 +5,15 @@ import cv2
 from utils import oddNum, notZero
 
 def resizing(im, contour):
+    """
+    Funcio que escala la imatge. Util per reduir el temps total del proces.
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parametres
+    *Outputs:
+    - im = imatge escalada
+    """
+    
     im2 = im
     if(contour != None):
         x, y = im.shape
@@ -15,6 +24,16 @@ def resizing(im, contour):
     return im2    
       
 def neutre(im, params):  
+    """
+    Funcio que neutralitza el color de la imatge. Util quan es esta tacat o hi
+    ha variancies.
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de paràmetres
+    *Outputs:
+    - im = imatge amb color neutralitzat
+    """
+    
     [x, y] = im.shape
     sz = notZero(x/85)
     if (sz < 5):
@@ -29,12 +48,30 @@ def neutre(im, params):
     return im
 
 def noise_removal(im, params):
+    """
+    Utilitzant la tecnica NMeans, elimina el soroll de la imatge
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parametres
+    *Outputs:
+    - im = imatge sense soroll
+    """
+    
     im_denoised = cv2.fastNlMeansDenoising(im)
 
     return im_denoised
     
 def treatement(im, params):
-    
+    """
+    Funcio que aplica tots el procedimens de millora de la cualitat
+    de la imatge
+    * Inputs:
+    - im = skimage.io image
+    - params = diccionari de parametres
+    *Outputs:
+    - im =  resultat de la imatge un cop ha pasat per tots els processos de
+            millora d'imatge
+    """
     if(params["status_msg"]): print "Starting im_treatement: Resizing"
     
     im = np.array(im, dtype=np.uint8)
