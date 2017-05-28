@@ -23,7 +23,7 @@ import im_treatement
 reload(im_treatement)
 import morf
 reload(morf)
-
+import sys
 
 lines = []
 trans_table = list(string.digits)+list(string.ascii_uppercase)+list(string.ascii_lowercase)
@@ -40,9 +40,9 @@ global_params = {
         },
         
         "new_net":False,
-        "image_name": "rot14.png",
+        "image_name": "Practica5-1.png",
         
-        "contour" : None,
+        "contour" : 1200,
         
         "status_msg" : True
     }
@@ -78,6 +78,7 @@ def process_img(im, params=global_params):
     lines = gc.get_all(im, params)
     
     if(params["status_msg"]): print "Predicting results..."
+    if(params["status_msg"]): print "====================="
     
     model = net.loadmodel('modelRetrainedRetrained')
     text = ""
@@ -85,9 +86,14 @@ def process_img(im, params=global_params):
         for word in line:
             for letter in word:
                 result = neural_predict(letter,model)
+                if(params["status_msg"]): sys.stdout.write(result)
                 text += result
+            if(params["status_msg"]): sys.stdout.write(" ")
             text += " "
+        if(params["status_msg"]): sys.stdout.write("\n")
         text += "\n"
+        
+    if(params["status_msg"]): print "========================"
     if(params["status_msg"]): print "Finished all operations."
     return text
 
