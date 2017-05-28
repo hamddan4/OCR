@@ -31,15 +31,15 @@ trans_table = list(string.digits)+list(string.ascii_uppercase)+list(string.ascii
 
 
 def neural_predict(im,model):    
-    im = im / np.max(im)    
+    im = im / np.max(im)        
+    try:
+        im = utils.rescale(im.astype(float),(64,64),4)
+        im = np.reshape(im,(1,64,64,1))
     
-    im = utils.rescale(im.astype(float),(64,64),4)
-
-    im = np.reshape(im,(1,64,64,1))
-    
-    letter = trans_table[net.net_predict(im,model)]
-    return letter
-#    return "x"
+        letter = trans_table[net.net_predict(im,model)]
+        return letter
+    except: 
+        return "x"
     
 def main():
     global lines
@@ -55,7 +55,7 @@ def main():
         },
         
         "new_net":False,
-        "image_name": "Practica5-1.png",
+        "image_name": "template_report-04.png",
         
         "contour" : None
     }

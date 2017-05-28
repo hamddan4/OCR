@@ -18,16 +18,13 @@ def oddNum(number):
 def rescale(im,final_size,padding):
     sy,sx = final_size
     sy,sx = sy-padding,sx-padding
-    
     if(np.shape(im) != (sy,sx)):
         modified_im = np.ones(final_size)
         current_size = np.shape(im)
         
         if(current_size[1]>current_size[0]):
-            pass
             im = cv2.resize(im,(sx,int(sx*current_size[0]/current_size[1])))
         else:
-            pass
             im = cv2.resize(im,(int(sy*current_size[1]/current_size[0]),sy))
             
         xmid = int((sx+padding)/2)
