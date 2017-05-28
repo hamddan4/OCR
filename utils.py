@@ -13,8 +13,11 @@ def evenNum(number):
     
 def oddNum(number):
     return number + np.uint(not(number%2))
-
-
+def notZero(number):
+    if(number):
+        return number
+    else:
+        return 1
 def rescale(im,final_size,padding):
     sy,sx = final_size
     sy,sx = sy-padding,sx-padding
@@ -35,7 +38,7 @@ def rescale(im,final_size,padding):
     return modified_im
  
 max_plots = 0
-def plt_i(im,title=None, maxp=20):
+def plt_i(im,title=None, maxp=30):
     global max_plots
     max_plots += 1
     if(max_plots < maxp):

@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from skimage.morphology import label
 from skimage.measure import regionprops
 
-from utils import plt_i
+from utils import plt_i, notZero
 
 import cv2
 
@@ -42,7 +42,7 @@ def get_lists_regions(regions):
         width.append(int(maxr-minr))
     
     return height, width
-def get_means(regions):
+def get_medians(regions):
     
     height, width = get_lists_regions(regions)
     
@@ -50,6 +50,13 @@ def get_means(regions):
     m_width = np.median(width)
     return m_height, m_width
 
+def get_means(regions):
+    
+    height, width = get_lists_regions(regions)
+    
+    m_height = np.mean(height);
+    m_width = np.mean(width)
+    return m_height, m_width
     
 def split_im_regions(im, regions, mean_height):
     im_list = []
@@ -67,14 +74,17 @@ def close_vert_median(im):
         label_image = label(im)
     
         regions = regionprops(label_image)
-        
-        height, width = get_means(regions)
+        if(len(regions)):
+            height, width = get_medians(regions)
     
-        #With the mean of height, we can do a vertical close in order to join
-        # dots of "i" and other marks
-        kern_siz = np.median(height)
-        kernel = np.ones((int(kern_siz/2),1),np.uint8)
-        im = cv2.erode(cv2.dilate(np.int16(im),kernel,1),kernel,1)
+            #With the mean of height, we can do a vertical close in order to join
+            # dots of "i" and other marks
+
+            kern_siz = np.median(height)
+            kernel = np.ones((notZero(kern_siz/2),1),np.uint8)
+            im = cv2.erode(cv2.dilate(np.int16(im),kernel,1),kernel,1)
+        else:
+            kern_siz = 1.0
     else:
         kern_siz = 1.0
     return im, kern_siz
@@ -85,11 +95,24 @@ def get_lines(params, im, mean_height):
     imy = np.zeros(im.shape,dtype=np.float64)
     nd.filters.sobel(im,0,imy)
     
-    x, y = im.shape
-    ws = x / 220
+#    x, y = im.shape
+#    ws = x / 220
     
-    g10 = nd.filters.gaussian_filter(imy, ws, order=(1,0))
+    label_image = label(im, connectivity = 2)
+    regions = regionprops(label_image)
+    m_height, m_width = get_medians(regions)
+    
+    
+    g10 = nd.filters.gaussian_filter(imy, notZero(m_width/2), order=(1,0))
     gbin = g10<0
+
+    kernel = np.ones((notZero(m_height/3),1),np.uint8)
+    gbin = cv2.dilate(np.int16(gbin),kernel,1)
+#    plt_i(gbin)
+#    kernel = np.ones((int(notZero(m_height/7)),1),np.uint8)
+#    gbin = cv2.dilate(np.int16(gbin),kernel,1)
+#    plt_i(gbin)
+    
     label_image = label(gbin, connectivity = 2)
     regions = regionprops(label_image)
     
@@ -154,7 +177,7 @@ def get_letters(params, im):
     imd1, mean_height = close_vert_median(im)
     labels1 = label(imd1, connectivity = 2)
     regions1 = regionprops(labels1)
-    m_height1, m_width1 = get_means(regions1)
+    m_height1, m_width1 = get_medians(regions1)
     
     
     
@@ -191,7 +214,7 @@ def get_all(im, params):
     imb, mean_height = close_vert_median(imn)
     label_image = label(imb)
     regions = regionprops(label_image)
-    height, width = get_means(regions)
+    height, width = get_medians(regions)
     
     im_lines = get_lines(params, imn, height)
     

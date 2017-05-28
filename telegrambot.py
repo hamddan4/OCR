@@ -3,7 +3,6 @@
 import telepot
 from telepot.loop import MessageLoop
 #from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
-import cv2
 from main import process_img
 import time
 from skimage import io
@@ -28,10 +27,12 @@ def handle(msg):
         print imdir
         num_proc = update_num_proc()
         url = "https://api.telegram.org/file/bot"+ TOKEN +"/"+ imdir["file_path"]
-        print url
-        urllib.urlretrieve(url, ImageFolder+"/foto_"+str(num_proc)+".jpg")
+        print "URL of Image: ", url
+        
+        imdir = ImageFolder+"/foto_"+str(num_proc)+".jpg"
+        urllib.urlretrieve(url, imdir)
 
-        im = io.imread(ImageFolder+"/foto_"+str(num_proc)+".jpg")
+        im = io.imread(imdir)
         
         text = process_img(im)
         

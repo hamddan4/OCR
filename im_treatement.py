@@ -2,7 +2,7 @@ from utils import plt_i
 import numpy as np
 import cv2
 
-from utils import oddNum
+from utils import oddNum, notZero
 
 def resizing(im, contour):
     im2 = im
@@ -16,7 +16,10 @@ def resizing(im, contour):
       
 def neutre(im, params):  
     [x, y] = im.shape
-    kernel = np.ones((x/85,x/85),np.uint8)
+    sz = notZero(x/85)
+    if (sz < 5):
+        sz = 5
+    kernel = np.ones((sz,sz),np.uint8)
     resd = cv2.erode(cv2.dilate(np.int16(im),kernel,1),kernel,1)
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(resd, "closed for neutralization")
