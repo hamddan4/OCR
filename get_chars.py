@@ -92,7 +92,8 @@ def get_lines(params, im, mean_height):
     gbin = g10<0
     label_image = label(gbin, connectivity = 2)
     regions = regionprops(label_image)
-        
+    
+     
     if(params["TEST_MODE"]["line_detect"]):
         plt_i(im)
         plt_i(imy)
@@ -123,13 +124,23 @@ def get_words_from_line(params, im):
     kernel = np.ones((1,int(mean_height/1.35)),np.uint8)
     imd2 = cv2.dilate(np.int16(imd1),kernel,1)
 
+    
+    label_image = label(imd2, connectivity = 2)
+    regions = regionprops(label_image)
+    
+    if len(regions):
+        regions = sorted(regions, key=lambda x: x.bbox[1])
+        
     if(params["TEST_MODE"]["word_detect"]):
         plt_i(im,"word_detect im")
         plt_i(imd1,"word_detect im1")
         plt_i(imd2,"word_detect im2")
-    
-    label_image = label(imd2, connectivity = 2)
-    regions = regionprops(label_image)
+        
+        plt.hold(True)
+        
+        plt_s(regions)
+
+        plt.hold(False)
 
     word_im_list = split_im_regions(im, regions, mean_height)
     
@@ -138,6 +149,7 @@ def get_words_from_line(params, im):
 def get_letters(params, im):
     
     #detect if they are itallics
+    x, y = im.shape
     
     imd1, mean_height = close_vert_median(im)
     labels1 = label(imd1, connectivity = 2)
@@ -145,17 +157,24 @@ def get_letters(params, im):
     m_height1, m_width1 = get_means(regions1)
     
     
+    
     label_image = label(imd1)
     regions = regionprops(label_image)
 
     if len(regions):
         regions = sorted(regions, key=lambda x: x.bbox[1])
-    
-    ch_im_list = split_im_regions(im, regions, mean_height)
+
+    ch_im_list = []
+    for i in range(len(regions)):
+        minr, minc, maxr, maxc = regions[i]['BoundingBox']
+        charac = im[(0):(x),(minc):(maxc)]
+        ch_im_list.append(charac)
+
+#    ch_im_list = split_im_regions(im, regions, mean_height)
     
     if(params["TEST_MODE"]["char_detect"]): 
         for img in ch_im_list:
-            plt_i(img)
+            plt_i(img, maxp=30)
         
     return ch_im_list
     

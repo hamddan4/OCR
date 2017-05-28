@@ -28,6 +28,7 @@ def del_big_spots(im, params):
     
     label_image = label(1-imb)
     regions = regionprops(label_image)
+    if(params["status_msg"]): print "RegionsB: ", len(regions)
     
     areas = np.array([x.area for x in regions])
 #    m_area = np.mean(areas)
@@ -54,6 +55,7 @@ def del_small_spots(im, params):
     
     label_image = label(1-imb)
     regions = regionprops(label_image)
+    if(params["status_msg"]): print "RegionsS: ", len(regions)
     
     areas = np.array([x.area for x in regions])
     m_area = np.mean(areas)
@@ -71,6 +73,14 @@ def apply_morf(im, params):
         plt_i(im, "thresholded")
     if(params["status_msg"]): print "Threshold Done, next step: Big Spots Deletion"
     
+    im = del_small_spots(im, params)
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(im, "small spots deleted")
+        
+    im = del_big_spots(im, params)
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(im, "big spots deleted")
+    
     im = del_big_spots(im, params)
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "big spots deleted")
@@ -80,8 +90,11 @@ def apply_morf(im, params):
     im = del_small_spots(im, params)
     if(params["TEST_MODE"]["im_treatement"]): 
         plt_i(im, "small spots deleted")
-    
-    
+    im = del_small_spots(im, params)
+    if(params["TEST_MODE"]["im_treatement"]): 
+        plt_i(im, "small spots deleted")
+    im = del_small_spots(im, params)
+
     if(params["status_msg"]): print "Small Spots Deleted. Morphology Done"
     
     return im

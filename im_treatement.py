@@ -2,6 +2,8 @@ from utils import plt_i
 import numpy as np
 import cv2
 
+from utils import oddNum
+
 def resizing(im, contour):
     im2 = im
     if(contour != None):
@@ -24,12 +26,9 @@ def neutre(im, params):
     return im
 
 def noise_removal(im, params):
-    
-    blur = cv2.GaussianBlur(im,(9,9),0)
-    ret2,th2 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    
-    imb = (im + th2)
-    return imb
+    im_denoised = cv2.fastNlMeansDenoising(im)
+
+    return im_denoised
     
 def treatement(im, params):
     
@@ -49,7 +48,7 @@ def treatement(im, params):
     im = noise_removal(im, params)
     
     if(params["TEST_MODE"]["im_treatement"]): 
-        plt_i(im,'Otsu thresholding + Gaussian filtering \n (noise removed)') 
+        plt_i(im,'Noise removed') 
     if(params["status_msg"]): print "Noise Removal OK. Next step: Neutralizing img"
     
     im = neutre(im, params)

@@ -40,7 +40,7 @@ global_params = {
         },
         
         "new_net":False,
-        "image_name": "Practica5-1.png",
+        "image_name": "rot14.png",
         
         "contour" : None,
         

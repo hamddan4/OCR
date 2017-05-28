@@ -47,9 +47,9 @@ def get_rotation(im,params):
     
     if(params["TEST_MODE"]["rotation"]):
         plt.figure()
-        plt.subplot(1, 2, 1)
+        plt.subplot(1, 3, 1)
         plt.imshow(I)
-        plt.subplot(1, 2, 2)
+        plt.subplot(1, 3, 2)
         plt.imshow(sinogram.T, aspect='auto')
         plt.gray()
         plt.axhline(rotation, color='r')
@@ -70,10 +70,11 @@ def fix_rotation(im, params):
     
     if(params["status_msg"]): print("Rotating: ", 90-rotation)
     
+    imr = rotate(im, 90-rotation, preserve_range=True, cval=numpy.max(im))
     if(params["TEST_MODE"]["rotation"]):
-        print("Rotation Angle: ", 90-rotation)
-    imr = rotate(im, 90-rotation, preserve_range=True)
-    
+        plt.subplot(1, 3, 3)
+        plt.imshow(imr)
+        
     if(params["status_msg"]): print("Rotation OK")
     
     
