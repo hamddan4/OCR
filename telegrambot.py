@@ -60,7 +60,6 @@ def handle(msg):
         else:
             bot.sendMessage(chat_id, "Sorry, I didn't understand you") 
             
-TOKEN = '340171475:AAFUDW_HiK1zaP-55plvA0zJNWaIVtQoYF8'
 bot = telepot.Bot(TOKEN)
 print(bot.getMe())
 
